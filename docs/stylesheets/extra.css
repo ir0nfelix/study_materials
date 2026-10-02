@@ -1,0 +1,360 @@
+/* Bookmark button styles */
+.bookmark-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    margin-left: 10px;
+    color: var(--md-default-fg-color--light);
+    transition: color 0.2s, transform 0.2s;
+    outline: none;
+    padding: 0;
+    vertical-align: middle;
+}
+
+.bookmark-btn:hover {
+    color: var(--md-accent-fg-color);
+    transform: scale(1.1);
+}
+
+.bookmark-btn.active {
+    color: #ffd700; /* Gold */
+}
+
+/* Container for bookmarks list */
+#bookmarks-container {
+    margin-top: 20px;
+}
+
+.bookmark-item {
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    background-color: var(--md-default-bg-color);
+    box-shadow: var(--md-shadow-z1);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    transition: opacity 0.3s;
+    border: 1px solid var(--md-default-fg-color--lightest);
+}
+
+.bookmark-item.completed {
+    opacity: 0.6;
+    background-color: var(--md-default-bg-color--light);
+}
+
+.bookmark-item.completed a {
+    text-decoration: line-through;
+    color: var(--md-default-fg-color--light);
+}
+
+.bookmark-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.bookmark-check {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    color: var(--md-default-fg-color);
+}
+
+.bookmark-header a {
+    flex-grow: 1;
+    font-weight: bold;
+    color: var(--md-typeset-a-color);
+    text-decoration: none;
+}
+
+.bookmark-header a:hover {
+    text-decoration: underline;
+}
+
+.bookmark-header .remove-btn {
+    background-color: var(--md-warn-fg-color);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.bookmark-header .remove-btn:hover {
+    opacity: 0.8;
+}
+
+.bookmark-content {
+    padding: 15px;
+    background-color: var(--md-default-bg-color--light);
+    border-radius: 4px;
+    border-left: 4px solid var(--md-primary-fg-color);
+    font-size: 0.95em;
+    line-height: 1.5;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.bookmark-content h3 {
+    margin-top: 0;
+}
+
+.bookmark-code {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid var(--md-default-fg-color--lightest);
+    background-color: var(--md-code-bg-color);
+    color: var(--md-code-fg-color);
+    font-family: var(--md-text-font-family);
+    resize: vertical;
+}
+
+.bookmark-code:focus {
+    outline: none;
+    border-color: var(--md-accent-fg-color);
+}
+
+.task-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    background: var(--md-default-bg-color--light);
+    border-radius: 6px;
+    border-left: 3px solid var(--md-primary-fg-color);
+}
+
+.task-category-select {
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--md-default-fg-color--lightest);
+    background: var(--md-default-bg-color);
+    color: var(--md-default-fg-color);
+    font-size: 0.9em;
+}
+
+.task-scripts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.script-tag {
+    font-size: 0.85em;
+    padding: 4px 10px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.script-tag.main {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #a5d6a7;
+}
+.script-tag.alternative {
+    background-color: #fff3e0;
+    color: #ef6c00;
+    border: 1px solid #ffcc80;
+}
+
+[data-md-color-scheme="slate"] .script-tag.main {
+    background-color: #1b5e20;
+    color: #a5d6a7;
+    border-color: #2e7d32;
+}
+
+[data-md-color-scheme="slate"] .script-tag.alternative {
+    background-color: #e65100;
+    color: #ffcc80;
+    border-color: #ef6c00;
+}
+
+.add-script-btn {
+    font-size: 0.85em;
+    padding: 4px 10px;
+    border-radius: 12px;
+    border: 1px dashed var(--md-default-fg-color--light);
+    background: transparent;
+    color: var(--md-default-fg-color--light);
+    cursor: pointer;
+}
+.add-script-btn:hover {
+    background: var(--md-default-fg-color--lightest);
+    color: var(--md-default-fg-color);
+}
+
+.task-separator {
+    margin: 40px 0;
+    border: 0;
+    border-bottom: 2px dashed var(--md-default-fg-color--lightest);
+}
+
+.script-inline-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--md-default-bg-color--light);
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--md-default-fg-color--lightest);
+}
+
+.script-input, .script-select {
+    padding: 4px 8px;
+    border: 1px solid var(--md-default-fg-color--lightest);
+    border-radius: 4px;
+    background: var(--md-default-bg-color);
+    color: var(--md-default-fg-color);
+    font-size: 0.9em;
+}
+
+.script-input:focus, .script-select:focus {
+    outline: none;
+    border-color: var(--md-primary-fg-color);
+}
+
+.script-save-btn {
+    padding: 4px 10px;
+    background: var(--md-primary-fg-color);
+    color: var(--md-primary-bg-color);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.script-save-btn:hover {
+    opacity: 0.9;
+}
+
+.script-cancel-btn {
+    padding: 4px 10px;
+    background: var(--md-default-fg-color--lightest);
+    color: var(--md-default-fg-color);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.script-cancel-btn:hover {
+    background: var(--md-default-fg-color--light);
+}
+
+.task-scripts-content {
+    margin-bottom: 20px;
+}
+
+.script-details {
+    background: var(--md-code-bg-color);
+    border: 1px solid var(--md-default-fg-color--lightest);
+    border-radius: 6px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.script-details summary {
+    cursor: pointer;
+    padding: 10px 15px;
+    font-weight: bold;
+    color: var(--md-code-fg-color);
+    background: var(--md-default-bg-color--light);
+    border-bottom: 1px solid var(--md-default-fg-color--lightest);
+    outline: none;
+}
+
+.script-details summary:hover {
+    background: var(--md-default-bg-color);
+}
+
+.script-pre {
+    margin: 0;
+    padding: 15px;
+    overflow-x: auto;
+    font-family: var(--md-code-font-family);
+    font-size: 0.9em;
+    color: var(--md-code-fg-color);
+}
+
+/* Увеличенный шрифт для левого меню (навигации) */
+.md-nav__link {
+    font-size: 0.85rem; /* Увеличено относительно дефолтного */
+}
+.md-nav__item--section > .md-nav__link {
+    font-size: 0.95rem; /* Еще крупнее для заголовков секций */
+    font-weight: bold;
+}
+
+/* Task Title styling */
+.task-title {
+    font-size: 1.8em !important;
+    font-weight: 900 !important;
+    color: var(--md-primary-fg-color) !important;
+    margin-top: 1.5em;
+    border-bottom: 2px solid var(--md-primary-fg-color);
+    padding-bottom: 0.2em;
+}
+
+/* Tags styles */
+.task-tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.task-tag-badge {
+    background-color: var(--md-accent-fg-color);
+    color: var(--md-accent-bg-color);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.task-tag-badge span {
+    font-weight: normal;
+    font-size: 0.9em;
+}
+
+.task-tag-badge span:hover {
+    color: #ffcccc;
+}
+
+.task-tag-select {
+    padding: 2px 6px;
+    border-radius: 12px;
+    border: 1px dashed var(--md-default-fg-color--light);
+    background: var(--md-default-bg-color);
+    color: var(--md-default-fg-color);
+    font-size: 0.8em;
+    cursor: pointer;
+    outline: none;
+}
+
+.task-tag-select option {
+    background: var(--md-default-bg-color);
+    color: var(--md-default-fg-color);
+}
+
+.task-tag-select:focus {
+    border-color: var(--md-accent-fg-color);
+}
+

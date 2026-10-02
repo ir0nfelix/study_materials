@@ -1,0 +1,53 @@
+site_name: Сборник задач с IT-собеседований
+site_description: Интерактивная книга для подготовки к техническим и менеджерским собеседованиям.
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+    - toc.integrate
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/extra.js
+
+
+nav:
+  - Введение: index.md
+  - Лайфкодинг:
+    - Go: livecoding/go.md
+    - Python: livecoding/python.md
+    - Java: livecoding/java.md
+    - React: livecoding/react.md
+  - Анатомия языка:
+    - Python: anatomy/python.md
+    - Go: anatomy/go.md
+  - Базы данных: databases/index.md
+  - Архитектура и System Design: architecture/index.md
+  - Менеджмент: management/index.md
+  - Мои закладки: bookmarks.md
+
+markdown_extensions:
+  - attr_list
+  - toc:
+      toc_depth: 2

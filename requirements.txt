@@ -1,0 +1,5 @@
+mkdocs>=1.5.0
+mkdocs-material>=9.4.0
+yt-dlp>=2025.01.0
+ray>=2.8.0
+rich>=13.0.0

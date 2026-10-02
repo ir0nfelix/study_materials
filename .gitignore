@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+venv/
+env/
+.env
+
+# Pipeline Queues & Data
+.cache/
+raw_transcripts/
+
+# MkDocs
+site/
+
+# IDEs
+.vscode/
+.idea/
+.DS_Store
