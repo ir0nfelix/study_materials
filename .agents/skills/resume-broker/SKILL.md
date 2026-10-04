@@ -34,11 +34,11 @@ description: Запуск фонового Ray-брокера для парал�
 3. Сообщи пользователю статус очередей.
 
 4. Брокер автоматически обработает:
-   - Скачивание (download_dispatcher) → `raw_transcripts/`
-   - Майнинг задач (miner_dispatcher) → `.cache/01_pending_triage/`
-   - Решение экспертом (ray_dispatcher) → `.cache/02b_pending_testing/`
-   - Тестирование (facilitator_dispatcher) → `.cache/03_pending_final/`
-   - Публикация (publisher_dispatcher) → `.cache/99_completed/`
+   - Скачивание (`download_dispatcher`) → `raw_transcripts/`
+   - Майнинг задач (`miner_dispatcher`) → `.cache/01_pending_triage/`
+   - Решение экспертом (`expert_dispatcher`) → `.cache/02b_pending_testing/`
+   - Тестирование (`facilitator_dispatcher`) → `.cache/03_pending_final/`
+   - Публикация (`publisher_dispatcher`) → `.cache/99_completed/`
 
 5. Задачи, требующие апрува (`.cache/01_pending_triage/`, `.cache/03_pending_final/`), **НЕ обрабатываются брокером**. Для них используй скилл `review-tasks`.
 

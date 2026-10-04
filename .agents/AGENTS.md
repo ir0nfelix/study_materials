@@ -35,11 +35,15 @@ agents/                      # Python-скрипты агентов (инстр�
 ├── AGENTS.md                # Этот файл (правила и архитектура)
 └── skills/                  # Skills — инструкции для агента-оркестратора
     ├── add-video/SKILL.md   # /add <url> — скачать и извлечь задачи
+    ├── add-doc/SKILL.md     # /add doc — PDF/изображения/тексты
     ├── search-videos/SKILL.md # /search "<query>" — поиск видео
     ├── review-tasks/SKILL.md  # /review — апрув и публикация задач
+    ├── remove-task/SKILL.md # /rm — удаление задачи из базы знаний
+    ├── edit-task/SKILL.md   # /edit — редактирование существующей карточки
     └── resume-broker/SKILL.md # /resume — запуск Ray-брокера для пакетной обработки
 infrastructure/
-├── llm_client.py            # Единая фабрика LLM (OpenRouter)
+├── models.py                # ← ЕДИНАЯ ТОЧКА настройки LLM-моделей и бюджетов
+├── llm_client.py            # Шлюз OpenRouter (импортирует модели из models.py)
 └── cli_broker.py            # Headless Ray worker pool (без UI, без решений)
 .cache/                      # Очереди File-based State Machine
 ├── 00_pending_download/     # Ожидают скачивания
@@ -133,6 +137,7 @@ def foo():
 - `/add <URL>` → Агент читает `add-video/SKILL.md`. Для одного видео — сам выполняет пайплайн. Для плейлиста — запускает брокер.
 - `/add doc <path>` → Агент читает `add-doc/SKILL.md`. Чтение и OCR PDF/изображений/текстов.
 - `/rm <задача>` → Агент читает `remove-task/SKILL.md`. Безопасное удаление задачи из базы знаний.
+- `/edit <задача>` → Агент читает `edit-task/SKILL.md`. Редактирование условия, решения или перегенерация через LLM.
 - `/search "<query>" [limit]` → Агент читает `search-videos/SKILL.md`. Ищет и скачивает видео.
 - `/review` → Агент читает `review-tasks/SKILL.md`. Показывает задачи из очереди, запрашивает апрув (с опциональным OCR скриншотов и выбором языка), запускает Эксперта.
 - `/resume` → Агент читает `resume-broker/SKILL.md`. Запускает Ray-брокер фоном для обработки накопившихся задач.

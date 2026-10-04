@@ -1,6 +1,8 @@
 """
-Единый клиент OpenRouter API.
-Все агенты импортируют get_client() и get_model() вместо дублирования boilerplate.
+Единый шлюз OpenRouter API.
+
+Все агенты импортируют get_client() и get_model() отсюда.
+Конфигурация моделей — в infrastructure/models.py (единственная точка настройки).
 
 Использование:
     from infrastructure.llm_client import get_client, get_model
@@ -15,34 +17,14 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 
-# ---------------------------------------------------------------------------
-# Реестр моделей по ролям (меняй здесь — применится ко всем агентам)
-# ---------------------------------------------------------------------------
-MODELS = {
-    # Miner: извлечение задач из транскрипций
-    # Требуется огромный контекст (транскрипты >128K токенов)
-    # Gemini 2.5 Flash: 1M контекст, $0.30/$2.50 за 1M токенов
-    "miner": "google/gemini-2.5-flash",
-
-    # Expert: генерация эталонных решений с кодом
-    # Claude Sonnet 4: лучшее качество кода, $3/$15 за 1M токенов
-    "expert": "anthropic/claude-sonnet-4",
-
-    # Expert (бюджетный): для массовой обработки
-    # GPT-4.1 Mini: $0.40/$1.60 за 1M токенов, контекст 1M
-    "expert_budget": "openai/gpt-4.1-mini",
-
-    # OCR: распознавание кода со скриншотов (vision)
-    # Gemini 2.5 Flash: поддерживает мультимодал, дёшево
-    "ocr": "google/gemini-2.5-flash",
-}
+from infrastructure.models import MODELS
 
 
 def get_client() -> OpenAI:
     """Создаёт OpenAI-совместимый клиент для OpenRouter.
 
     - Загружает OPENROUTER_API_KEY из .env в корне проекта
-    - Патчит socks:// → socks5:// для совместимости с httpx
+    - Патчит socks:// → socks5:// для совместимости с httpx/socksio
     - Возвращает готовый клиент
     """
     root_dir = _find_project_root()
@@ -70,23 +52,29 @@ def get_client() -> OpenAI:
 def get_model(role: str) -> str:
     """Возвращает ID модели OpenRouter для указанной роли.
 
+    Роли и их назначение — в infrastructure/models.py.
+
     Args:
         role: Ключ из MODELS — "miner", "expert", "expert_budget", "ocr"
 
     Returns:
         Строка вида "google/gemini-2.5-flash"
+
+    Raises:
+        KeyError: если роль не найдена в реестре и нет fallback
     """
-    return MODELS.get(role, MODELS["expert_budget"])
+    if role not in MODELS:
+        fallback = MODELS.get("expert_budget", "openai/gpt-4.1-mini")
+        print(f"[llm_client] WARNING: unknown role '{role}', using fallback: {fallback}")
+        return fallback
+    return MODELS[role]
 
 
 def _find_project_root() -> str:
     """Находит корень проекта (где лежит .env / mkdocs.yml)."""
-    # Поднимаемся от infrastructure/ на один уровень
     here = os.path.dirname(os.path.abspath(__file__))
     root = os.path.dirname(here)
 
-    # Перестраховка: если запускают из другого места
     if os.path.exists(os.path.join(root, ".env")):
         return root
-    # Fallback: текущая рабочая директория
     return os.getcwd()
