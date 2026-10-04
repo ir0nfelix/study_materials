@@ -1,68 +1,26 @@
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from dataclasses import dataclass
-import requests
-import backoff
+def merge_by_pointers(nums1: list[int], m: int, nums2: list[int], n: int) -> None:
+    pointer_nums1 = m - 1
+    pointer_nums2 = n - 1
+    last_pointer_nums1 = m + n - 1
 
-base_url = "https://jsonplaceholder.typicode.com/todos/"
+    while pointer_nums1 >= 0 and pointer_nums2 >= 0:
+        if nums1[pointer_nums1] > nums2[pointer_nums2]:
+            nums1[last_pointer_nums1] = nums1[pointer_nums1]
+            pointer_nums1 -= 1
+        else:
+            nums1[last_pointer_nums1] = nums2[pointer_nums2]
+            pointer_nums2 -= 1
+        last_pointer_nums1 -= 1
 
-WORKERS = 200
-TIMEOUT = 1
-
-@dataclass
-class APIData:
-    url: str
-    status_code: int
-    data: dict
-    error: None | str = None
-
-def giveup_catcher(exception):
-    is_server_error = all[
-        isinstance(exception, requests.HTTPError),
-        exception.response.status_code in (403, 404)
-    ]
-    return is_server_error
-
-
-@backoff.on_exception(
-    backoff.expo,
-    requests.exceptions.RequestException,
-    max_tries=3,
-    giveup=giveup_catcher,
-    interval=1,
-    factor=2,
-)
-def get_api_data(url: str) -> dict:
-    response = requests.get(url, timeout=TIMEOUT)
-    data = APIData(
-        url=url,
-        status_code=response.status_code,
-        data=response.json(),
-    )
-    return data
-
-
-def scraper():
-    results = []
-    with ThreadPoolExecutor(max_workers=WORKERS) as executor:
-        future_data = {
-            executor.submit(get_api_data, url): url for url in
-            [f"{base_url}{i}" for i in range(1, 201)]
-        }
-        for future in as_completed(future_data):
-            try:
-                url = future_data[future]
-                result = future.result()
-            except Exception as e:
-                result = APIData(
-                    url=url,
-                    status_code=-1,
-                    data={},
-                    error=str(e)
-                )
-            results.append(result)
-    return results
+    # Если в nums2 остались элементы — дописываем их
+    while pointer_nums2 >= 0:
+        nums1[last_pointer_nums1] = nums2[pointer_nums2]
+        pointer_nums2 -= 1
+        last_pointer_nums1 -= 1
 
 
 if __name__ == "__main__":
-    out = scraper()
-    print(out)
+    nums1 = [1, 2, 3, 5, 0, 0, 0, 0]
+    nums2 = [5, 6, 7, 8]
+    merge_by_pointers(nums1, 3, nums2, 4)
+    print(nums1)  # [1, 2, 3, 4, 5, 6, 7, 8]

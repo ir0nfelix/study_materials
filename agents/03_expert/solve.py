@@ -1,8 +1,8 @@
 import sys
 import os
 import json
-from dotenv import load_dotenv
-from openai import OpenAI
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+from infrastructure.llm_client import get_client, get_model
 
 def process_task(file_path):
     if not os.path.exists(file_path):
@@ -12,26 +12,11 @@ def process_task(file_path):
     with open(file_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
         
-    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
-    load_dotenv(os.path.join(root_dir, ".env"))
-    
-    api_key = os.getenv("OPENROUTER_API_KEY")
-    if not api_key:
-        print("ERROR: OPENROUTER_API_KEY not found in .env")
-        sys.exit(1)
-        
-    # Patch proxy schemes for httpx compatibility
-    for p_var in ['http_proxy', 'https_proxy', 'all_proxy', 'HTTP_PROXY', 'HTTPS_PROXY', 'ALL_PROXY']:
-        if p_var in os.environ and os.environ[p_var].startswith('socks://'):
-            os.environ[p_var] = os.environ[p_var].replace('socks://', 'socks5://', 1)
-            
-    client = OpenAI(
-        base_url="https://openrouter.ai/api/v1",
-        api_key=api_key,
-    )
+    client = get_client()
     
     task_title = data.get("title", "Unknown Task")
     task_condition = data.get("condition", "")
+    target_language = data.get("target_language", "Python")
     
     prompt = f"""
     Ты Senior AI Software Engineer. Тебе дана задача с технического собеседования.
@@ -41,7 +26,7 @@ def process_task(file_path):
     Твоя задача: Написать эталонное решение (AI).
     Формат ответа:
     1. Краткий анализ задачи (Time/Space complexity).
-    2. Оптимальный код решения (на Python, Go или Java - выбери наиболее подходящий, или напиши на Python по умолчанию).
+    2. Оптимальный код решения СТРОГО НА {target_language}.
     3. Детальное объяснение, почему выбран именно этот алгоритм.
     
     Оформи ответ красиво в формате Markdown. Начни свой ответ с заголовка: ### Эталонное решение (AI)
@@ -49,7 +34,7 @@ def process_task(file_path):
     
     try:
         response = client.chat.completions.create(
-            model="openai/gpt-4o-mini",
+            model=get_model("expert"),
             messages=[
                 {"role": "system", "content": "You are a Senior Software Engineer acting as an Expert Interviewer."},
                 {"role": "user", "content": prompt}

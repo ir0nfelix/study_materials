@@ -2,8 +2,8 @@ import sys
 import os
 import json
 import time
-from dotenv import load_dotenv
-from openai import OpenAI
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+from infrastructure.llm_client import get_client, get_model
 
 def main():
     if len(sys.argv) < 2:
@@ -28,23 +28,7 @@ def main():
     triage_dir = os.path.join(cache_dir, "01_pending_triage")
     os.makedirs(triage_dir, exist_ok=True)
     
-    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
-    load_dotenv(os.path.join(root_dir, ".env"))
-    
-    api_key = os.getenv("OPENROUTER_API_KEY")
-    if not api_key:
-        print("ERROR: OPENROUTER_API_KEY not found in .env")
-        sys.exit(1)
-        
-    # Patch proxy schemes for httpx compatibility
-    for p_var in ['http_proxy', 'https_proxy', 'all_proxy', 'HTTP_PROXY', 'HTTPS_PROXY', 'ALL_PROXY']:
-        if p_var in os.environ and os.environ[p_var].startswith('socks://'):
-            os.environ[p_var] = os.environ[p_var].replace('socks://', 'socks5://', 1)
-            
-    client = OpenAI(
-        base_url="https://openrouter.ai/api/v1",
-        api_key=api_key,
-    )
+    client = get_client()
     
     prompt = """
     Ты Senior Technical Analyst. Тебе на вход подается сырой транскрипт (субтитры) технического собеседования.
@@ -55,6 +39,7 @@ def main():
     Каждый элемент массива должен содержать:
     "title" - Краткое, но ёмкое название задачи (например: "Сортировка массива", "System Design: Мессенджер").
     "condition" - Полное и детальное условие задачи, восстановленное из речи интервьюера (без мусора из субтитров, отформатированное и читаемое).
+    "source_language" - Язык программирования (например "python", "go", "java", "sql", "unknown"), на котором задача изначально решалась или обсуждалась.
     
     Если задач не найдено, верни пустой массив в ключе "tasks": {"tasks": []}
     """
@@ -62,7 +47,7 @@ def main():
     print(f"Miner: Sending {len(content)} chars to LLM for {video_id}...")
     try:
         response = client.chat.completions.create(
-            model="openai/gpt-4o-mini",
+            model=get_model("miner"),
             messages=[
                 {"role": "system", "content": prompt},
                 {"role": "user", "content": content}
@@ -95,7 +80,8 @@ def main():
         task_data = {
             "source_file": filename,
             "title": task.get("title", f"Задача {i}"),
-            "condition": task.get("condition", "")
+            "condition": task.get("condition", ""),
+            "source_language": task.get("source_language", "unknown")
         }
         
         task_path = os.path.join(triage_dir, f"{video_id}_task_{i}.json")

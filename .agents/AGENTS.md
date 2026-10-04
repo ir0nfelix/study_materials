@@ -39,6 +39,7 @@ agents/                      # Python-скрипты агентов (инстр�
     ├── review-tasks/SKILL.md  # /review — апрув и публикация задач
     └── resume-broker/SKILL.md # /resume — запуск Ray-брокера для пакетной обработки
 infrastructure/
+├── llm_client.py            # Единая фабрика LLM (OpenRouter)
 └── cli_broker.py            # Headless Ray worker pool (без UI, без решений)
 .cache/                      # Очереди File-based State Machine
 ├── 00_pending_download/     # Ожидают скачивания
@@ -130,16 +131,18 @@ def foo():
 
 ### Команды пользователя (слэш-команды в чате)
 - `/add <URL>` → Агент читает `add-video/SKILL.md`. Для одного видео — сам выполняет пайплайн. Для плейлиста — запускает брокер.
+- `/add doc <path>` → Агент читает `add-doc/SKILL.md`. Чтение и OCR PDF/изображений/текстов.
+- `/rm <задача>` → Агент читает `remove-task/SKILL.md`. Безопасное удаление задачи из базы знаний.
 - `/search "<query>" [limit]` → Агент читает `search-videos/SKILL.md`. Ищет и скачивает видео.
-- `/review` → Агент читает `review-tasks/SKILL.md`. Показывает задачи из очереди, запрашивает апрув, запускает Эксперта/Фасилитатора/Паблишера.
+- `/review` → Агент читает `review-tasks/SKILL.md`. Показывает задачи из очереди, запрашивает апрув (с опциональным OCR скриншотов и выбором языка), запускает Эксперта.
 - `/resume` → Агент читает `resume-broker/SKILL.md`. Запускает Ray-брокер фоном для обработки накопившихся задач.
 
 ### Поток данных
 ```
-/add <url>
-  → download.py → raw_transcripts/*.vtt
+/add <url> (download.py) / /add doc <path> (ingest_doc.py)
+  → raw_transcripts/*.vtt | *.txt
     → mine.py → .cache/01_pending_triage/*.json
-      → [АПРУВ В ЧАТЕ]
+      → [АПРУВ В ЧАТЕ + OCR СКРИНОВ + ВЫБОР ЯЗЫКА]
         → solve.py → .cache/02b_pending_testing/*.json
           → test_runner.py → .cache/03_pending_final/*.json
             → [АПРУВ В ЧАТЕ]
